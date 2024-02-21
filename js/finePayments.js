@@ -32,7 +32,60 @@ alert "Номер не співпадає" або "Сума не співпад�
 Якщо валідація проходить успішно, то виконати оплату,
  тобто вам потрібно видалити обєкт з DB
  */
+
+ var validationPassport = /^[А-ЯІЇ]{2}[0-9]{6}$/;
+ var validationCreditCardNumber = /^[0-9]{16}$/;
+ var validationCvv = /^[0-9]{3}$/;
+
+
 buttonSubmit.addEventListener('click',payFine);
+
 function payFine(){
 
+    if(!numberAndAmountValidation()){
+    } else if(!passport.value.match(validationPassport)){
+        alert("Не вірний паспортний номер");
+    } else if(!creditCardNumber.value.match(validationCreditCardNumber)){
+        alert("Не вірна кредитна картка");
+    }else if(!cvv.value.match(validationCvv)){
+        alert("Не вірний cvv");
+    } else{
+        deleteFine();
+    }
+        console.log(DB);
+}
+
+function numberAndAmountValidation(){
+    var fineNumberFinded = false;
+    var amountFinded = false;
+
+    for (var i = 0; i < DB.length; i++) {
+        var object = DB[i];
+        if (fineNumber.value == object.номер) {
+            fineNumberFinded = true;
+            if (amount.value != object.сума) {
+                break;
+            } else {
+                amountFinded = true;
+                break;
+            }
+        }
+    }
+
+    if(!fineNumberFinded){
+        alert("Номер не співпадає");
+        return false;
+    } else if(!amountFinded){
+        alert("Сума не співпадає");
+        return false;
+    }
+    return true;
+}
+
+function deleteFine(){
+    DB.forEach(function(object, index) {
+        if (fineNumber.value === object.номер) {
+            DB.splice(index, 1);
+        }
+    });   
 }
